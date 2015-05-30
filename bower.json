@@ -1,0 +1,28 @@
+{
+  "name": "drawing-canvas",
+  "version": "0.0.0",
+  "authors": [
+    "Jérémie Ledentu <jledentu@gmail.com>"
+  ],
+  "description": "A canvas with drawing features.",
+  "keywords": [
+    "web-component",
+    "web-components",
+    "polymer",
+    "canvas"
+  ],
+  "main": "drawing-canvas.html",
+  "homepage": "https://github.com/jledentu/drawing-canvas/",
+  "ignore": [
+    "/.*",
+    "/test/",
+    "/demo/"
+  ],
+  "dependencies": {
+    "polymer": "Polymer/polymer#^1.0.0"
+  },
+  "devDependencies": {
+    "iron-component-page": "PolymerElements/iron-component-page#^1.0.0",
+    "web-component-tester": "*"
+  }
+}

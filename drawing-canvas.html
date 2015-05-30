@@ -1,0 +1,123 @@
+<link rel="import" href="../polymer/polymer.html">
+
+<!--
+A canvas with drawing features.
+
+Example:
+
+    <drawing-canvas></drawing-canvas>
+
+@demo
+-->
+<dom-module id="drawing-canvas">
+
+  <style>
+
+  </style>
+
+  <template>
+    <canvas id="tmpCanvas"></canvas>
+  </template>
+
+</dom-module>
+
+<script>
+(function() {
+
+  'use strict';
+
+  Polymer({
+
+    is: 'drawing-canvas',
+
+    extends: 'canvas',
+
+    properties: {
+
+      /**
+       * Sets the tool applied on the canvas.
+       *
+       * Should be one of:
+       * - `brush`, `bucket`, `eraser`, `picker`
+       */
+      tool: {
+        type: String,
+        value: function() {
+          return 'brush';
+        },
+        observer: '_toolChanged'
+      },
+
+      /**
+       * Sets the line width.
+       *
+       * @attribute lineWidth
+       */
+      lineWidth: {
+        type: Number,
+        value: function() {
+          return 20;
+        },
+        observer: '_lineWidthChanged'
+      }
+    },
+
+    _mouseDown: false,
+
+    _lastPosition: null,
+
+    _strokeColor: 'orange',
+
+    _fillColor: 'white',
+
+    _tools: {
+      brush: {
+
+      }
+    },
+
+    // Element Lifecycle
+
+    ready: function() {
+      // `ready` is called after all elements have been configured, but
+      // propagates bottom-up. This element's children are ready, but parents
+      // are not.
+      //
+      // This is the point where you should make modifications to the DOM (when
+      // necessary), or kick off any processes the element wants to perform.
+
+      this.ctx = this.getContext('2d');
+      this.tmpCtx = this.$.tmpCanvas.getContext('2d');
+      this.$.tmpCanvas.width = this.width;
+      this.$.tmpCanvas.height = this.height;
+    },
+
+    attached: function() {
+      // `attached` fires once the element and its parents have been inserted
+      // into a document.
+      //
+      // This is a good place to perform any work related to your element's
+      // visual state or active behavior (measuring sizes, beginning animations,
+      // loading resources, etc).
+    },
+
+    detached: function() {
+      // The analog to `attached`, `detached` fires when the element has been
+      // removed from a document.
+      //
+      // Use this to clean up anything you did in `attached`.
+    },
+
+    // Element Behavior
+
+    _toolChanged: function() {
+      console.log(this.tool);
+    },
+
+    _lineWidthChanged: function() {
+      console.log(this.lineWidth);
+    }
+  });
+})();
+
+</script>
