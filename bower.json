@@ -1,17 +1,17 @@
 {
-  "name": "drawing-canvas",
+  "name": "paint-canvas",
   "version": "0.0.0",
   "authors": [
     "Jérémie Ledentu <jledentu@gmail.com>"
   ],
-  "description": "A canvas with drawing features.",
+  "description": "A canvas with painting/sketching features.",
   "keywords": [
     "web-component",
     "web-components",
     "polymer",
     "canvas"
   ],
-  "main": "drawing-canvas.html",
+  "main": "paint-canvas.html",
   "homepage": "https://github.com/jledentu/drawing-canvas/",
   "ignore": [
     "/.*",

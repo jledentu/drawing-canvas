@@ -1,3 +1,3 @@
-# drawing-canvas
+# paint-canvas
 
-A canvas element with drawing features.
+A canvas element with painting/sketching features.

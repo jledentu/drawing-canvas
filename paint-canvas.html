@@ -1,0 +1,228 @@
+<!--
+The MIT License (MIT)
+
+Copyright (c) 2015 Jérémie Ledentu
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
+-->
+<link rel="import" href="../polymer/polymer.html">
+<link rel="import" href="./paint-tool-brush.html">
+
+<!--
+A canvas with painting/sketching features.
+
+Example:
+
+    <paint-canvas></paint-canvas>
+
+@demo
+-->
+<dom-module id="paint-canvas">
+
+  <style>
+  :host {
+    position: relative;
+    display: block;
+  }
+
+  #canvas, #tmp {
+    position: absolute;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+  }
+  </style>
+
+  <template>
+    <canvas id="canvas"></canvas>
+    <canvas id="tmp"></canvas>
+  </template>
+
+</dom-module>
+
+<script>
+(function() {
+
+  'use strict';
+
+  var CONTEXT_2D = '2d';
+
+  Polymer({
+
+    is: 'paint-canvas',
+
+    listeners: {
+      down:  '_onDown',
+      track: '_onTrack',
+      tap:   '_onTap'
+    },
+
+    properties: {
+
+      width: {
+        type: Number,
+        reflectToAttribute: true
+      },
+
+      height: {
+        type: Number,
+        reflectToAttribute: true
+      },
+
+      /**
+       * Sets the tool applied on the canvas.
+       *
+       * Should be one of:
+       * - `brush`, `bucket`, `eraser`, `picker`
+       */
+      tool: {
+        type: String,
+        value: function() {
+          return 'brush';
+        },
+        observer: '_toolChanged'
+      },
+
+      /**
+       * Sets the line width.
+       *
+       * @attribute brushWidth
+       */
+      brushWidth: {
+        type: Number,
+        value: function() {
+          return 20;
+        }
+      },
+
+      /**
+       * Sets the brush color.
+       *
+       * @attribute brushColor
+       */
+      brushColor: {
+        type: Number,
+        value: function() {
+          return 'black';
+        }
+      }
+    },
+
+    _mouseDown: false,
+
+    _lastPosition: null,
+
+    _fillColor: 'white',
+
+    _tools: {
+      'brush': Brush
+    },
+
+    // Element Lifecycle
+
+    ready: function() {
+      // `ready` is called after all elements have been configured, but
+      // propagates bottom-up. This element's children are ready, but parents
+      // are not.
+      //
+      // This is the point where you should make modifications to the DOM (when
+      // necessary), or kick off any processes the element wants to perform.
+      //
+
+      this.ctx = this.$.canvas.getContext(CONTEXT_2D);
+      this.tmpCtx = this.$.tmp.getContext(CONTEXT_2D);
+
+      // Init Tools
+      //this._tools = {
+      //  'brush': new Tools.Brush(this.$.canvas, this.$.tmp)
+      //};
+
+      this.resize();
+    },
+
+    attached: function() {
+      // `attached` fires once the element and its parents have been inserted
+      // into a document.
+      //
+      // This is a good place to perform any work related to your element's
+      // visual state or active behavior (measuring sizes, beginning animations,
+      // loading resources, etc).
+    },
+
+    detached: function() {
+      // The analog to `attached`, `detached` fires when the element has been
+      // removed from a document.
+      //
+      // Use this to clean up anything you did in `attached`.
+    },
+
+    // Element Behavior
+
+    _onTap: function(e) {
+      var offsetCoords = this._toElement(e.detail.x, e.detail.y);
+      this._tools[this.tool].onTap.bind(this, offsetCoords.x, offsetCoords.y)();
+    },
+
+    _onDown: function(e) {
+      //this._tools[this.tool].onDown.bind(this, e.detail.x, e.detail.y)();
+    },
+
+    _onTrack: function(e) {
+      var offsetCoords = this._toElement(e.detail.x, e.detail.y);
+      if (e.detail.state === 'end') {
+        this._tools[this.tool].onTrackEnd.bind(this, offsetCoords.x, offsetCoords.y)();
+      }
+      else if (e.detail.state === 'start') {
+        this._tools[this.tool].onTrackStart.bind(this, offsetCoords.x, offsetCoords.y)();
+      }
+      else {
+        this._tools[this.tool].onTrack.bind(this, offsetCoords.x, offsetCoords.y)();
+      }
+    },
+
+    _toElement(x, y) {
+      var style = this.currentStyle || window.getComputedStyle(this, null),
+        borderLeftWidth = parseInt(style['borderLeftWidth'], 10),
+        borderTopWidth = parseInt(style['borderTopWidth'], 10),
+        rect = this.getBoundingClientRect(),
+        offsetX = x - borderLeftWidth - rect.left,
+        offsetY = y - borderTopWidth - rect.top;
+
+      return {x: offsetX, y: offsetY};
+    },
+
+    _toolChanged: function() {
+      console.log(this.tool);
+    },
+
+    _lineWidthChanged: function() {
+      console.log(this.lineWidth);
+    },
+
+    resize: function() {
+      this.$.canvas.width = this.clientWidth;
+      this.$.canvas.height = this.clientHeight;
+      this.$.tmp.width = this.clientWidth;
+      this.$.tmp.height = this.clientHeight;
+    }
+  });
+})();
+
+</script>
